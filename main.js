@@ -4,7 +4,7 @@ var dgram = require('dgram');
 var server = dgram.createSocket("udp4");
 var url = require('url');
 
-var PORT = 41234;
+var PORT = 41235;
 var BROADCAST_ADDR = "192.168.1.255";
 var discoverResult = []
 
@@ -27,7 +27,7 @@ http.createServer(async function(req, res){
         res.write("<h2>Not found</h2>");
         res.end();
     }
-}).listen(3000);
+}).listen(3001);
 
 
 
