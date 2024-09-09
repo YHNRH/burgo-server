@@ -3,6 +3,23 @@ const request = require('request');
 var dgram = require('dgram');
 var server = dgram.createSocket("udp4");
 var url = require('url');
+var mysql = require('mysql');
+
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "user",
+  password: "secret"
+});
+
+con.connect(function(err) {
+  if (err) throw err;
+  con.query('USE burgo;', function (err, result) {
+    if (err) throw err;
+    console.log("Result: " + result);
+  });
+  console.log("Connected!");
+});
+
 
 var PORT = 41235;
 var BROADCAST_ADDR = "192.168.1.255";
@@ -15,13 +32,39 @@ http.createServer(async function(req, res){
     var queryData = url.parse(req.url, true);
     console.dir(queryData)
     if(queryData.pathname === "/api/getudp"){
-      res.write(JSON.stringify(await udp()));
-      res.end();
+      var devices = await udp();
+      devices.forEach((device, index) => {
+        con.query('SELECT NAME FROM device WHERE Id = ' + device.Id, function (err, result) {
+          if (err) throw err;
+          if (result.length > 0)
+            device.Name = result[0].NAME;
+          if (index == devices.length-1){
+            res.write(JSON.stringify(devices));
+            res.end();
+          }
+        });
+      });
+
     }
     else if(queryData.pathname === '/api/switchstate'){
       var esp = discoverResult.find(el => el.Id == queryData.query.Id);
       res.write(JSON.stringify(await doRequest('http://' + esp.address + '/RELAY=' + queryData.query.RELAY)));
       res.end();
+    }
+    else if(queryData.pathname === '/api/updatedevice'){
+      con.query(
+        'INSERT INTO device ' +
+        '(ID, NAME) ' +
+        'VALUES (' +  queryData.query.Id + ', \'' + queryData.query.name + '\') ' +
+        'ON DUPLICATE KEY UPDATE ' +
+        'NAME = ' + '\'' + queryData.query.name + '\';'
+        , function (err, result) {
+        if (err) throw err;
+          
+        console.dir(result)
+        res.write('test');
+        res.end();
+      });
     }
     else{
         res.write("<h2>Not found</h2>");
