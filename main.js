@@ -34,6 +34,7 @@ http.createServer(async function(req, res){
     if(queryData.pathname === "/api/getudp"){
       var devices = await udp();
       devices.forEach((device, index) => {
+        device.Name = device.Id;
         con.query('SELECT NAME FROM device WHERE Id = ' + device.Id, function (err, result) {
           if (err) throw err;
           if (result.length > 0)
