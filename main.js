@@ -4,7 +4,7 @@ var dgram = require('dgram');
 var server = dgram.createSocket("udp4");
 var url = require('url');
 var mysql = require('mysql');
-
+const fs = require('fs')
 var con = mysql.createConnection({
   host: "localhost",
   user: "user",
@@ -65,6 +65,22 @@ http.createServer(async function(req, res){
         console.dir(result)
         res.write('test');
         res.end();
+      });
+    }
+    else if(queryData.pathname === '/api/test'){
+      let body = '';
+      req.on('data', (chunk) => {
+          body += chunk;
+      });
+      req.on('end', () => {
+      
+        fs.appendFile('output.raw', body, (err) => {
+            if (err) throw err;
+        })
+
+        console.log(body);
+        res.write('"okay"'); 
+        res.end(); 
       });
     }
     else{
