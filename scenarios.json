@@ -1,0 +1,56 @@
+{
+    "scenarios": [
+      {
+        "name": "weather",
+        "triggers": [
+          {"pattern": "(?:скажи|узнай|какая) погода(?: в (?<city>[а-яА-Я]+))?"},
+          {"pattern": "(?:что|как) там на улице"},
+          {"pattern": "температура (?:в|на) улице"},
+          {"pattern": "скажи текущую погоду"}
+        ],
+        "action": {
+          "type": "weather",
+          "provider": "openweathermap",
+          "city_default": "Нижний Новгород"
+        },
+        "response_template": "Сейчас в {city} {temp} градусов, {description}."
+      },
+      {
+        "name": "light_on",
+        "triggers": [
+          {"pattern": "включи свет в (?<room>кухне|гостиной|спальне|коридоре)"},
+          {"pattern": "зажги свет в (?<room>.+)"}
+        ],
+        "action": {
+          "type": "mqtt",
+          "topic": "home/{room}/light/set",
+          "payload": "ON"
+        },
+        "response_text": "Включаю свет в {room}."
+      },
+      {
+        "name": "light_off",
+        "triggers": [
+          {"pattern": "выключи свет в (?<room>.+)"},
+          {"pattern": "погаси свет в (?<room>.+)"}
+        ],
+        "action": {
+          "type": "mqtt",
+          "topic": "home/{room}/light/set",
+          "payload": "OFF"
+        },
+        "response_text": "Выключаю свет в {room}."
+      },
+      {
+        "name": "time",
+        "triggers": [
+          {"pattern": "(?:сколько|который) (?:времени|час)"},
+          {"pattern": "текущее время"}
+        ],
+        "action": {
+          "type": "get_time"
+        },
+        "response_template": "Сейчас {time}."
+      }
+    ]
+  }
