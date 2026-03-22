@@ -17,11 +17,11 @@ async function generateSpeech(text, targetRate = TTS_TARGET_RATE) {
         await execPromise(ttsCmd);
         
         // 2. Передискретизация через FFmpeg
-        const ffmpegCmd = `ffmpeg -i ${tempRaw} -ar ${targetRate} -ac 1 -c:a pcm_s16le ${tempResampled} -y`;
-        await execPromise(ffmpegCmd);
+        // const ffmpegCmd = `ffmpeg -i ${tempRaw} -ar ${targetRate} -ac 1 -c:a pcm_s16le ${tempResampled} -y`;
+        // await execPromise(ffmpegCmd);
         
         // 3. Читаем результат
-        const audioBuffer = fs.readFileSync(tempResampled);
+        const audioBuffer = fs.readFileSync(tempRaw);
         return audioBuffer;
     } catch (err) {
         logger.error('TTS generation error:', err);

@@ -13,7 +13,7 @@ async function recognizeSpeech(audioBuffer) {
         // Сохраняем входящий WAV во временный файл
         fs.writeFileSync(tempWav, audioBuffer);
         
-        const { stdout, stderr } = await execPromise(`${PYTHON_PATH} speech.py ${tempWav}`);
+        const { stdout, stderr } = await execPromise(`${PYTHON_PATH} vosk_stt.py ${tempWav}`);
         if (stderr) logger.warn('STT stderr:', stderr);
         return stdout.trim();
     } catch (err) {

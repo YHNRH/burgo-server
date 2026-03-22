@@ -45,7 +45,8 @@
         "name": "time",
         "triggers": [
           {"pattern": "(?:сколько|который) (?:времени|час)"},
-          {"pattern": "текущее время"}
+          {"pattern": "текущее время"},
+          {"pattern": "время"}
         ],
         "action": {
           "type": "get_time"
